@@ -1,4 +1,37 @@
-class LinkedNode:
+class Node:
+    """Just a Node, fundamental part of many data structures."""
+    def __init__(self,object,next=None):
+        """Subclass builder.
+
+        Parameters
+        ----------
+        object : any
+            Object to be incapsulated in a Node.
+        
+        Returns
+        -------
+        Node
+            A Node object containing the incapsulated object.
+        """
+        self.object = object
+
+    def __repr__(self):
+        """Object representation.
+
+        Parameters
+        ----------
+        self : Node
+            A Node object.
+
+        Returns
+        -------
+        str
+            A string representation of the Node object.
+        """
+        return "<Node object>\n{:>8}{}\n{:>8}{}".format("Object: ",self.object,"Type: ",type(self.object))
+
+
+class LinkedNode(Node):
     """Node with a pointer to the next element."""
     def __init__(self,object,next=None):
         """Subclass builder.
@@ -12,10 +45,11 @@ class LinkedNode:
         
         Returns
         -------
-        Node
-            A Node object containing the incapsulated object and a pointer to the next Node.
+        LinkedNode
+            A LinkedNode object containing the incapsulated object and a pointer to the next Node (if any).
         """
-        self.object, self.next = object, next
+        super().__init__(object)
+        self.next = next
 
     def __repr__(self):
         """Object representation.
@@ -52,7 +86,7 @@ class DoublyLinkedNode(LinkedNode):
         Returns
         -------
         DoublyLinkedNode
-            A DoublyLinkedNode object with the desired object incapsulated in it.
+            A DoublyLinkedNode object with the desired object incapsulated in it and pointers to the previous and the next Nodes (if any).
         """
         super().__init__(object,next)
         self.previous=previous
