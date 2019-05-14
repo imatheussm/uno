@@ -9,6 +9,7 @@ class LinkedNode:
             Object to be incapsulated in a Node.
         next : any
             Pointer to the next Node (optional)
+        
         Returns
         -------
         Node
@@ -70,6 +71,15 @@ class DoublyLinkedCircularList:
         self.reference, self.size = None, 0
         for argument in arguments: self.insert(argument)
 
+    def __repr__(self):
+        """List representation."""
+        pointer, representation = self.reference, "{} ".format(self.reference.object)
+        while id(pointer.next)!=id(self.reference):
+            pointer = pointer.next
+            representation += str(pointer.object) + " "
+        return representation[:-1]
+        
+
     def insert(self,node,index=None):
         """Insert a Node object into the DoublyLinkedCircularList."""
         if index==None: index=self.size
@@ -78,7 +88,10 @@ class DoublyLinkedCircularList:
         if not isinstance(node,DoublyLinkedNode): node = DoublyLinkedNode(node)
 
         if self.size==0: self.reference, node.previous, node.next = 3*[node]
+        elif self.size==1: self.reference.previous, self.reference.next, node.previous, node.next = 2*[node] + 2*[self.reference]
         else:
-            previous_pointer, pointer = None, self.reference
-            for i in range(index-1): previous_pointer, pointer = pointer, pointer.next
+            previous_pointer, pointer = self.reference.previous, self.reference
+            for i in range(index): previous_pointer, pointer = pointer, pointer.next
             previous_pointer.next, node.previous, node.next, pointer.previous = node, previous_pointer, pointer, node
+            if index==0: self.reference=node
+        self.size+=1
