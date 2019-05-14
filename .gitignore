@@ -1,2 +1,6 @@
 __pycache__
 *.pyc
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/uno/v15/.suo
+.vs/VSWorkspaceState.json
