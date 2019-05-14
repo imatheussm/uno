@@ -147,7 +147,7 @@ class DoublyLinkedCircularList:
         return representation[:-1]
         
 
-    def insert(self,node,index=None):
+    def insert(self,node,index=self.size):
         """Insert a Node object into the DoublyLinkedCircularList.
         
         Parameters
@@ -156,9 +156,10 @@ class DoublyLinkedCircularList:
             A DoublyLinkedCircularList object.
         node : any
             The object to be inserted. If not a DoublyLinkedNode, it will be automatically incapsulated into one.
+        index : int (default = self.size)
+            The index in which to insert the node parameter in the list. If not provided, will default to self.size – in other words, will be inserted at the end of the list.
         """
-        if index==None: index=self.size
-        elif index>self.size: raise IndexError("Index out of range.")
+        if index>self.size: raise IndexError("Index out of range.")
         if not isinstance(node,DoublyLinkedNode): node = DoublyLinkedNode(node)
         if self.size==0: self.reference, node.previous, node.next = 3*[node]
         elif self.size==1: self.reference.previous, self.reference.next, node.previous, node.next = 2*[node] + 2*[self.reference]
@@ -168,3 +169,14 @@ class DoublyLinkedCircularList:
             previous_pointer.next, node.previous, node.next, pointer.previous = node, previous_pointer, pointer, node
             if index==0: self.reference=node
         self.size+=1
+
+    def remove(self,index=0):
+        """Remove a Node from the DoublyLinkedCircularList.
+
+        Parameters
+        ----------
+        self : DoublyLinkedCircularList
+            A DoublyLinkedCircularList object.
+        index : int (default = 0)
+            Index whose Node is to be removed. If not provided, it will default to 0 – in other words, it will remove the first item of the list.
+        """
