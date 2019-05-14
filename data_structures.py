@@ -18,7 +18,18 @@ class LinkedNode:
         self.object, self.next = object, next
 
     def __repr__(self):
-        """Object representation"""
+        """Object representation.
+
+        Parameters
+        ----------
+        self : LinkedNode
+            A LinkedNode object.
+
+        Returns
+        -------
+        str
+            A string representation of the LinkedNode object.
+        """
         return "<LinkedNode object>\n{:>8}{}\n{:>8}{}".format("Object: ",self.object,"Type: ",type(self.object))
 
 
@@ -47,7 +58,18 @@ class DoublyLinkedNode(LinkedNode):
         self.previous=previous
 
     def __repr__(self):
-        """Object representation"""
+        """Object representation
+        
+        Parameters
+        ----------
+        self : DoublyLinkedNode
+            A DoublyLinkedNode object.
+
+        Returns
+        -------
+        str
+            A string representation of the DoublyLinkedNode object.
+        """
         return "<DoublyLinkedNode object>\n{:>8}{}\n{:>8}{}".format("Object: ",self.object,"Type: ",type(self.object))
 
 
@@ -72,7 +94,18 @@ class DoublyLinkedCircularList:
         for argument in arguments: self.insert(argument)
 
     def __repr__(self):
-        """List representation."""
+        """Object representation.
+        
+        Parameters
+        ----------
+        self : DoublyLinkedCircularList
+            A DoublyLinkedCircularList object.
+
+        Returns
+        -------
+        str
+            A string representation of the DoublyLinkedCircularList object.
+        """
         pointer, representation = self.reference, "{} ".format(self.reference.object)
         while id(pointer.next)!=id(self.reference):
             pointer = pointer.next
@@ -81,12 +114,18 @@ class DoublyLinkedCircularList:
         
 
     def insert(self,node,index=None):
-        """Insert a Node object into the DoublyLinkedCircularList."""
+        """Insert a Node object into the DoublyLinkedCircularList.
+        
+        Parameters
+        ----------
+        self : DoublyLinkedCircularList
+            A DoublyLinkedCircularList object.
+        node : any
+            The object to be inserted. If not a DoublyLinkedNode, it will be automatically incapsulated into one.
+        """
         if index==None: index=self.size
         elif index>self.size: raise IndexError("Index out of range.")
-
         if not isinstance(node,DoublyLinkedNode): node = DoublyLinkedNode(node)
-
         if self.size==0: self.reference, node.previous, node.next = 3*[node]
         elif self.size==1: self.reference.previous, self.reference.next, node.previous, node.next = 2*[node] + 2*[self.reference]
         else:
