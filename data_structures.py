@@ -146,7 +146,32 @@ class DoublyLinkedCircularList:
         """
         self.reference, self.size = None, 0
         for argument in arguments: self.insert(argument)
-        
+    
+    def __eq__(self,other):
+        """Object comparison.
+
+        Checks if two DoublyLinkedCircularLists are the same.
+
+        Parameters
+        ----------
+        self : DoublyLinkedCircularList
+            A DoublyLinkedCircularList object.
+        other : DoublyLinkedCircularList
+            A DoublyLinkedCircularList object.
+
+        Returns
+        -------
+        bool
+            The result of the comparison.
+        """
+        try: self.size == other.size and self.reference == other.reference
+        except: return False
+        self_pointer, other_pointer = self.reference, other.reference
+        for i in range(self.size):
+            self_pointer, other_pointer = self_pointer.next, other_pointer.next
+            if self_pointer != other_pointer: return False
+        return True
+
     def __repr__(self):
         """Object representation.
         
