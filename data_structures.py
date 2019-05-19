@@ -181,3 +181,11 @@ class DoublyLinkedCircularList:
         index : int (default = 0)
             Index whose Node is to be removed. If not provided, it will default to 0. In other words, it will remove the first item of the list.
         """
+        if index>self.size-1: raise IndexError("Index out of range.")
+        elif self.size==1: self.reference=None
+        else:
+            pointer = self.reference
+            for i in range(index): pointer = pointer.next
+            pointer.previous.next, pointer.next.previous = pointer.next, pointer.previous
+            if index==0: self.reference=self.reference.next
+        self.size-=1
