@@ -140,6 +140,7 @@ class DoublyLinkedCircularList:
         str
             A string representation of the DoublyLinkedCircularList object.
         """
+        if self.reference==None: return ""
         pointer, representation = self.reference, "{} ".format(self.reference.object)
         while id(pointer.next)!=id(self.reference):
             pointer = pointer.next
