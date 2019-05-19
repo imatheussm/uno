@@ -15,6 +15,26 @@ class Node:
         """
         self.object = object
 
+    def __eq__(self,other):
+        """Object comparison.
+        
+        Attempts to compare the values of the Nodes and their types to see if they are the same.
+
+        Parameters
+        ----------
+        self : Node
+            A Node (or any of its subclasses)
+        other : Node
+            A Node (or any of its subclasses)
+
+        Returns
+        -------
+        bool
+            The result of the comparison.
+        """
+        try: return self.object==other.object and isinstance(self,type(other))
+        except: return False
+
     def __repr__(self):
         """Object representation.
 
@@ -126,7 +146,7 @@ class DoublyLinkedCircularList:
         """
         self.reference, self.size = None, 0
         for argument in arguments: self.insert(argument)
-
+        
     def __repr__(self):
         """Object representation.
         
