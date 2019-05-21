@@ -145,7 +145,10 @@ class DoublyLinkedCircularList:
             A DoublyLinkedCircularList object with the desired elements (if any) already inserted.
         """
         self.reference, self.size = None, 0
-        for argument in arguments: self.insert(argument)
+        for argument in arguments:
+            if type(argument)==list or type(argument)==tuple:
+                for item in argument: self.insert(DoublyLinkedNode(item))
+            else: self.insert(argument)
     
     def __eq__(self,other):
         """Object comparison.
