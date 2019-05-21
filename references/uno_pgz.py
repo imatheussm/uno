@@ -3,6 +3,7 @@ from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
 
+import pgzrun
 
 COLORS = ['red', 'yellow', 'green', 'blue']
 ALL_COLORS = COLORS + ['black']
@@ -501,3 +502,5 @@ def on_mouse_down(pos):
             if card.collidepoint(pos):
                 game_data.selected_color = color
                 game_data.color_selection_required = False
+
+pgzrun.go()
