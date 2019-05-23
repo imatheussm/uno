@@ -3,7 +3,7 @@ from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
 
-import pgzrun
+from pgzrun import go
 
 COLORS = ['red', 'yellow', 'green', 'blue']
 ALL_COLORS = COLORS + ['black']
@@ -557,7 +557,7 @@ class AIUnoGame:
             ' '.join(str(card) for card in self.player.hand)
         ))
 
-num_players = 3
+num_players = 3#int(input("How many players?"))
 
 game = AIUnoGame(num_players)
 
@@ -604,7 +604,7 @@ def draw_players_hands():
             sprite.draw()
 
 def show_log():
-    screen.draw.text(game_data.log, midbottom=(WIDTH/2, HEIGHT-50), color='black')
+    screen.draw.text(game_data.log, center=(WIDTH-160,70), color='black')
 
 def update():
     screen.clear()
@@ -627,4 +627,4 @@ def on_mouse_down(pos):
                 game_data.selected_color = color
                 game_data.color_selection_required = False
 
-pgzrun.go()
+go()
