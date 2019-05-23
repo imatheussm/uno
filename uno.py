@@ -3,10 +3,6 @@ from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
 
-#from os import chdir
-#chdir("D:/igor/OneDrive/Documentos/GitHub/uno")
-#from data_structures import *
-
 import pgzrun
 
 COLORS = ['red', 'yellow', 'green', 'blue']
