@@ -1,10 +1,8 @@
-import os
-os.chdir("D:/igor/OneDrive/Documentos/GitHub/uno")
-import data_structures as ds
 from random import shuffle, choice, randint
 from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
+
 import pgzrun
 
 COLORS = ['red', 'yellow', 'green', 'blue']
@@ -157,18 +155,16 @@ class UnoGame:
         self.players = [
             UnoPlayer(self._deal_hand(), n) for n in range(players)
         ]
-        self._player_cycle = ds.DoublyLinkedCircularList(self.players)
-        self._current_player = self._player_cycle.reference
+        self._player_cycle = ReversibleCycle(self.players)
+        self._current_player = next(self._player_cycle)
         self._winner = None
         self._check_first_card()
-        self.reversed = False
 
     def __next__(self):
         """
         Iteration sets the current player to the next player in the cycle.
         """
-        if not self.reversed: self._current_player = self._current_player.next
-        else: self._current_player = self._current_player.previous
+        self._current_player = next(self._player_cycle)
 
     def _create_deck(self, random):
         """
@@ -225,7 +221,7 @@ class UnoGame:
         if not 0 <= player < len(self.players):
             raise ValueError('Invalid player: index out of range')
         _player = self.players[player]
-        if self.current_player.object != _player:
+        if self.current_player != _player:
             raise ValueError('Invalid player: not their turn')
         if card is None:
             self._pick_up(_player, 1)
@@ -257,7 +253,7 @@ class UnoGame:
                 next(self)
                 self._pick_up(self.current_player, 4)
         elif card_type == 'reverse':
-            self.reversed = not self.reversed
+            self._player_cycle.reverse()
         elif card_type == 'skip':
             next(self)
         elif card_type == '+2':
@@ -289,7 +285,6 @@ class UnoGame:
         n: int
         """
         penalty_cards = [self.deck.pop(0) for i in range(n)]
-        if isinstance(player,ds.DoublyLinkedNode): player=player.object
         player.hand.extend(penalty_cards)
 
     def _check_first_card(self):
@@ -299,56 +294,56 @@ class UnoGame:
             print("Selected random color for black card: {}".format(color))
 
 
-#class ReversibleCycle:
-#    """
-#    Represents an interface to an iterable which can be infinitely cycled (like
-#    itertools.cycle), and can be reversed.
-#
-#    Starts at the first item (index 0), unless reversed before first iteration,
-#    in which case starts at the last item.
-#
-#    iterable: any finite iterable
-#
-#    >>> rc = ReversibleCycle(range(3))
-#    >>> next(rc)
-#    0
-#    >>> next(rc)
-#    1
-#    >>> rc.reverse()
-#    >>> next(rc)
-#    0
-#    >>> next(rc)
-#    2
-#    """
-#    def __init__(self, iterable):
-#        self._items = list(iterable)
-#        self._pos = None
-#        self._reverse = False
-#
-#    def __next__(self):
-#        if self.pos is None:
-#            self.pos = -1 if self._reverse else 0
-#        else:
-#            self.pos = self.pos + self._delta
-#        return self._items[self.pos]
-#
-#    @property
-#    def _delta(self):
-#        return -1 if self._reverse else 1
-#
-#    @property
-#    def pos(self):
-#        return self._pos
-#
-#    @pos.setter
-#    def pos(self, value):
-#        self._pos = value % len(self._items)
-#
-#    def reverse(self):
-#        """
-#        Reverse the order of the iterable.
-#        """
-#        self._reverse = not self._reverse
+class ReversibleCycle:
+    """
+    Represents an interface to an iterable which can be infinitely cycled (like
+    itertools.cycle), and can be reversed.
+
+    Starts at the first item (index 0), unless reversed before first iteration,
+    in which case starts at the last item.
+
+    iterable: any finite iterable
+
+    >>> rc = ReversibleCycle(range(3))
+    >>> next(rc)
+    0
+    >>> next(rc)
+    1
+    >>> rc.reverse()
+    >>> next(rc)
+    0
+    >>> next(rc)
+    2
+    """
+    def __init__(self, iterable):
+        self._items = list(iterable)
+        self._pos = None
+        self._reverse = False
+
+    def __next__(self):
+        if self.pos is None:
+            self.pos = -1 if self._reverse else 0
+        else:
+            self.pos = self.pos + self._delta
+        return self._items[self.pos]
+
+    @property
+    def _delta(self):
+        return -1 if self._reverse else 1
+
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, value):
+        self._pos = value % len(self._items)
+
+    def reverse(self):
+        """
+        Reverse the order of the iterable.
+        """
+        self._reverse = not self._reverse
 
 
 class GameData:
@@ -392,9 +387,9 @@ class AIUnoGame:
     def __next__(self):
         game = self.game
         player = game.current_player
-        player_id = player.object.player_id
+        player_id = player.player_id
         current_card = game.current_card
-        if player.object == self.player:
+        if player == self.player:
             played = False
             while not played:
                 card_index = None
@@ -402,13 +397,13 @@ class AIUnoGame:
                     card_index = game_data.selected_card
                 new_color = None
                 if card_index is not False:
-                    card = player.object.hand[card_index]
+                    card = player.hand[card_index]
                     if not game.current_card.playable(card):
                         game_data.log = 'You cannot play that card'
                         continue
                     else:
                         game_data.log = 'You played card {:full}'.format(card)
-                        if card.color == 'black' and len(player.object.hand) > 1:
+                        if card.color == 'black' and len(player.hand) > 1:
                             game_data.color_selection_required = True
                             while new_color is None:
                                 new_color = game_data.selected_color
@@ -418,18 +413,18 @@ class AIUnoGame:
                     game_data.log = 'You picked up'
                 game.play(player_id, card_index, new_color)
                 played = True
-        elif player.object.can_play(game.current_card):
-            for i, card in enumerate(player.object.hand):
+        elif player.can_play(game.current_card):
+            for i, card in enumerate(player.hand):
                 if game.current_card.playable(card):
                     if card.color == 'black':
                         new_color = choice(COLORS)
                     else:
                         new_color = None
-                    game_data.log = "Player {} played {:full}".format(player.object, card)
+                    game_data.log = "Player {} played {:full}".format(player, card)
                     game.play(player=player_id, card=i, new_color=new_color)
                     break
         else:
-            game_data.log = "Player {} picked up".format(player.object)
+            game_data.log = "Player {} picked up".format(player)
             game.play(player=player_id, card=None)
 
 
