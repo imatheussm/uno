@@ -17,8 +17,8 @@ COLOR_CARD_TYPES = NUMBERS + SPECIAL_CARD_TYPES * 2
 BLACK_CARD_TYPES = ['wildcard', '+4']
 CARD_TYPES = NUMBERS + SPECIAL_CARD_TYPES + BLACK_CARD_TYPES
 
-class DoublyLinkedPlayerList:
-    """A doubly-linked, circular list which uses DoublyLinkedNodes"""
+class DoublyLinkedCircularPlayerList:
+    """A doubly-linked, circular list which uses UnoPlayer objects"""
     def __init__(self,*arguments):
         """Class builder.
         
@@ -106,7 +106,7 @@ class DoublyLinkedPlayerList:
         self : DoublyLinkedPlayerList
             A DoublyLinkedPlayerList object.
         player : UnoPlayer
-            The object to be inserted. If not a DoublyLinkedNode, it will be automatically incapsulated into one.
+            The object to be inserted. If not a UnoPlayer object, a TypeError exception will be raised.
         index : int (default = self.size)
             The index in which to insert the node parameter in the list. If not provided, will default to self.size. In other words, will be inserted at the end of the list.
         """
@@ -283,7 +283,7 @@ class UnoGame:
         self.players = [
             UnoPlayer(self._deal_hand(), n) for n in range(players)
         ]
-        self._player_cycle = DoublyLinkedPlayerList(self.players)
+        self._player_cycle = DoublyLinkedCircularPlayerList(self.players)
         self._current_player = next(self._player_cycle)
         self._winner = None
         self._check_first_card()
