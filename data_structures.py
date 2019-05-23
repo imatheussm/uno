@@ -167,7 +167,8 @@ class DoublyLinkedCircularList:
         bool
             The result of the comparison.
         """
-        try: self.size == other.size and self.reference == other.reference
+        try: 
+            if not self.size == other.size and self.reference == other.reference: return False
         except: return False
         self_pointer, other_pointer = self.reference, other.reference
         for i in range(self.size):
