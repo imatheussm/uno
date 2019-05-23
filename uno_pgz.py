@@ -3,7 +3,7 @@ from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
 
-from pgzrun import go
+#from pgzrun import go
 
 COLORS = ['red', 'yellow', 'green', 'blue']
 ALL_COLORS = COLORS + ['black']
@@ -627,4 +627,4 @@ def on_mouse_down(pos):
                 game_data.selected_color = color
                 game_data.color_selection_required = False
 
-go()
+#go()
