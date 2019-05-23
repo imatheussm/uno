@@ -3,6 +3,10 @@ from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
 
+from os import chdir
+chdir("D:/igor/OneDrive/Documentos/GitHub/uno")
+from data_structures import *
+
 import pgzrun
 
 COLORS = ['red', 'yellow', 'green', 'blue']
@@ -93,7 +97,6 @@ class UnoCard:
             other.color == 'black'
         )
 
-
 class UnoPlayer:
     """
     Represents a player in an Uno game. A player is created with a list of 7
@@ -105,7 +108,7 @@ class UnoPlayer:
     >>> cards = [UnoCard('red', n) for n in range(7)]
     >>> player = UnoPlayer(cards)
     """
-    def __init__(self, cards, player_id=None):
+    def __init__(self, cards, player_id=None,previous_player=None,next_player=None):
         if len(cards) != 7:
             raise ValueError(
                 'Invalid player: must be initalised with 7 UnoCards'
@@ -116,6 +119,8 @@ class UnoPlayer:
             )
         self.hand = cards
         self.player_id = player_id
+        self.previous_player = previous_player
+        self.next_player = next_player
 
     def __repr__(self):
         if self.player_id is not None:
@@ -294,56 +299,56 @@ class UnoGame:
             print("Selected random color for black card: {}".format(color))
 
 
-class ReversibleCycle:
-    """
-    Represents an interface to an iterable which can be infinitely cycled (like
-    itertools.cycle), and can be reversed.
-
-    Starts at the first item (index 0), unless reversed before first iteration,
-    in which case starts at the last item.
-
-    iterable: any finite iterable
-
-    >>> rc = ReversibleCycle(range(3))
-    >>> next(rc)
-    0
-    >>> next(rc)
-    1
-    >>> rc.reverse()
-    >>> next(rc)
-    0
-    >>> next(rc)
-    2
-    """
-    def __init__(self, iterable):
-        self._items = list(iterable)
-        self._pos = None
-        self._reverse = False
-
-    def __next__(self):
-        if self.pos is None:
-            self.pos = -1 if self._reverse else 0
-        else:
-            self.pos = self.pos + self._delta
-        return self._items[self.pos]
-
-    @property
-    def _delta(self):
-        return -1 if self._reverse else 1
-
-    @property
-    def pos(self):
-        return self._pos
-
-    @pos.setter
-    def pos(self, value):
-        self._pos = value % len(self._items)
-
-    def reverse(self):
-        """
-        Reverse the order of the iterable.
-        """
-        self._reverse = not self._reverse
+#class ReversibleCycle:
+#    """
+#    Represents an interface to an iterable which can be infinitely cycled (like
+#    itertools.cycle), and can be reversed.
+#
+#    Starts at the first item (index 0), unless reversed before first iteration,
+#    in which case starts at the last item.
+#
+#    iterable: any finite iterable
+#
+#    >>> rc = ReversibleCycle(range(3))
+#    >>> next(rc)
+#    0
+#    >>> next(rc)
+#    1
+#    >>> rc.reverse()
+#    >>> next(rc)
+#    0
+#    >>> next(rc)
+#    2
+#    """
+#    def __init__(self, iterable):
+#        self._items = list(iterable)
+#        self._pos = None
+#        self._reverse = False
+#
+#    def __next__(self):
+#        if self.pos is None:
+#            self.pos = -1 if self._reverse else 0
+#        else:
+#            self.pos = self.pos + self._delta
+#        return self._items[self.pos]
+#
+#    @property
+#    def _delta(self):
+#        return -1 if self._reverse else 1
+#
+#    @property
+#    def pos(self):
+#        return self._pos
+#
+#    @pos.setter
+#    def pos(self, value):
+#        self._pos = value % len(self._items)
+#
+#    def reverse(self):
+#        """
+#        Reverse the order of the iterable.
+#        """
+#        self._reverse = not self._reverse
 
 
 class GameData:
