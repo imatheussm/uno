@@ -3,9 +3,9 @@ from itertools import product, repeat, chain
 from threading import Thread
 from time import sleep
 
-from os import chdir
-chdir("D:/igor/OneDrive/Documentos/GitHub/uno")
-from data_structures import *
+#from os import chdir
+#chdir("D:/igor/OneDrive/Documentos/GitHub/uno")
+#from data_structures import *
 
 import pgzrun
 
@@ -17,6 +17,129 @@ COLOR_CARD_TYPES = NUMBERS + SPECIAL_CARD_TYPES * 2
 BLACK_CARD_TYPES = ['wildcard', '+4']
 CARD_TYPES = NUMBERS + SPECIAL_CARD_TYPES + BLACK_CARD_TYPES
 
+class DoublyLinkedPlayerList:
+    """A doubly-linked, circular list which uses DoublyLinkedNodes"""
+    def __init__(self,*arguments):
+        """Class builder.
+        
+        Parameters
+        ----------
+        self : DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object.
+        *arguments : any
+            Anything to be added into the DoublyLinkedPlayerList instance.
+
+        Returns
+        -------
+        DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object with the desired elements (if any) already inserted.
+        """
+        self.reference, self.size, self.reversed = None, 0, False
+        for argument in arguments:
+            if type(argument)==list or type(argument)==tuple:
+                for item in argument: self.insert(item)
+            else: self.insert(argument)
+    
+    def __eq__(self,other):
+        """Object comparison.
+
+        Checks if two DoublyLinkedPlayerLists are the same.
+
+        Parameters
+        ----------
+        self : DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object.
+        other : DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object.
+
+        Returns
+        -------
+        bool
+            The result of the comparison.
+        """
+        try:
+            if not self.size == other.size and self.reference == other.reference: return False
+        except: return False
+        self_pointer, other_pointer = self.reference, other.reference
+        for i in range(self.size):
+            self_pointer, other_pointer = self_pointer.next, other_pointer.next
+            if self_pointer != other_pointer: return False
+        return True
+
+    def __next__(self):
+        player = self.reference
+        self.reference = self.reference.next
+        return player
+
+    def __repr__(self):
+        """Object representation.
+        
+        Parameters
+        ----------
+        self : DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object.
+
+        Returns
+        -------
+        str
+            A string representation of the DoublyLinkedPlayerList object.
+        """
+        if self.reference==None: return ""
+        pointer, representation = self.reference, "{} ".format(self.reference.object)
+        while id(pointer.next)!=id(self.reference):
+            pointer = pointer.next
+            representation += str(pointer.object) + " "
+        return representation[:-1]
+
+    def reverse(self):
+        self.reversed = not self.reversed
+
+    @property
+    def pos(self):
+        return self.reference.player_id
+
+    def insert(self,player,index=None):
+        """Insert a Node object into the DoublyLinkedPlayerList.
+        
+        Parameters
+        ----------
+        self : DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object.
+        player : UnoPlayer
+            The object to be inserted. If not a DoublyLinkedNode, it will be automatically incapsulated into one.
+        index : int (default = self.size)
+            The index in which to insert the node parameter in the list. If not provided, will default to self.size. In other words, will be inserted at the end of the list.
+        """
+        if index==None: index=self.size
+        if index>self.size: raise IndexError("Index out of range.")
+        if not isinstance(player,UnoPlayer): raise TypeError("This object is not a player!")
+        if self.size==0: self.reference, player.previous, player.next = 3*[player]
+        elif self.size==1: self.reference.previous, self.reference.next, player.previous, player.next = 2*[player] + 2*[self.reference]
+        else:
+            previous_pointer, pointer = self.reference.previous, self.reference
+            for i in range(index): previous_pointer, pointer = pointer, pointer.next
+            previous_pointer.next, player.previous, player.next, pointer.previous = player, previous_pointer, pointer, player
+            if index==0: self.reference=player
+        self.size+=1
+
+    def remove(self,index=0):
+        """Remove a Node from the DoublyLinkedPlayerList.
+
+        Parameters
+        ----------
+        self : DoublyLinkedPlayerList
+            A DoublyLinkedPlayerList object.
+        index : int (default = 0)
+            Index whose Node is to be removed. If not provided, it will default to 0. In other words, it will remove the first item of the list.
+        """
+        if index>self.size-1: raise IndexError("Index out of range.")
+        elif self.size==1: self.reference=None
+        else:
+            pointer = self.reference
+            for i in range(index): pointer = pointer.next
+            pointer.previous.next, pointer.next.previous = pointer.next, pointer.previous
+            if index==0: self.reference=self.reference.next
+        self.size-=1
 
 class UnoCard:
     """
@@ -160,7 +283,7 @@ class UnoGame:
         self.players = [
             UnoPlayer(self._deal_hand(), n) for n in range(players)
         ]
-        self._player_cycle = ReversibleCycle(self.players)
+        self._player_cycle = DoublyLinkedPlayerList(self.players)
         self._current_player = next(self._player_cycle)
         self._winner = None
         self._check_first_card()
