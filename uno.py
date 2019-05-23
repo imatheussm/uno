@@ -557,7 +557,7 @@ class AIUnoGame:
             ' '.join(str(card) for card in self.player.hand)
         ))
 
-num_players = 3#int(input("How many players?"))
+num_players = 3 #int(input("How many players?"))
 
 game = AIUnoGame(num_players)
 
