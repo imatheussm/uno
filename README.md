@@ -1,6 +1,9 @@
-# Uno
+# Uno (with doubly-linked circular lists)
+**An adaptation of the original implementation (located under references) which uses the DoublyLinkedCircularPlayerList class I created (along with an adapted UnoPlayer class with previous and next pointers) instead of the ReversibleCycle class originally employed.**
 
-Some unit tested Python code to model the card game Uno
+## Original project
+
+https://github.com/bennuttall/uno
 
 ## Rules
 
@@ -34,7 +37,7 @@ while game.is_active:
         game.play(player=player_id, card=None)
 ```
 
-See [random_game.py](random_game.py)
+See [random_game.py](random_game.py), which contains a similar version (with a random number of players to each match).
 
 ## AI
 
